@@ -8,6 +8,18 @@ a nestjs google drive upload app
 $ npm i
 ```
 
+## Setup Google Drive API
+
+- Go to [Google Cloud Console](https://console.cloud.google.com/)
+- Create a new project
+- Enable Google Drive API
+- Create a service account
+- Download the service account key
+- Fill the `.env` file with the service account data
+- Create a `uploads` folder in your Google Drive
+- Share the `uploads` folder with the service account email
+- Share the `uploads` folder with anyone who has the link to make the files public
+
 ## Running the app
 
 ```bash

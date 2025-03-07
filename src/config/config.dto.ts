@@ -1,5 +1,15 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsUrl, Max, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+} from 'class-validator';
 
 export enum NodeEnv {
   Development = 'development',
@@ -25,4 +35,17 @@ export class ConfigDto {
     require_protocol: true,
   })
   POSTGRES_URL: string;
+
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  GOOGLE_EMAIL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  GOOGLE_PRIVATE_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  GOOGLE_CLIENT_ID: string;
 }
