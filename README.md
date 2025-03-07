@@ -2,12 +2,6 @@
 
 a nestjs google drive upload app
 
-## Installation
-
-```bash
-$ npm i
-```
-
 ## Setup Google Drive API
 
 - Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -22,12 +16,27 @@ $ npm i
 
 ## Running the app
 
+- Install the dependencies
+
 ```bash
-# development
-# create and fill .env from .env.example
+$ npm i
+```
+
+- Create a `.env` file from the `.env.example` file
+- Fill the `.env` file with the required data
+- Run the app services
+
+```bash
 $ docker compose up -d
+```
+
+- Run the app
+
+```bash
 $ npm run start:dev
 ```
+
+- Go to [http://localhost:3000](http://localhost:3000) to see the swagger with examples
 
 ## Migrations
 
