@@ -2,6 +2,21 @@
 
 a nestjs google drive upload app
 
+## Installation
+
+```bash
+$ npm i
+```
+
+## Running the app
+
+```bash
+# development
+# create and fill .env from .env.example
+$ docker compose up -d
+$ npm run start:dev
+```
+
 ## Migrations
 
 ```bash
