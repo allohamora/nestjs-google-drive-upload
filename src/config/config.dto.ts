@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsUrl, Max, Min } from 'class-validator';
 
 export enum NodeEnv {
   Development = 'development',
@@ -18,4 +18,11 @@ export class ConfigDto {
   @Max(65535)
   @IsOptional()
   PORT: number;
+
+  @IsUrl({
+    protocols: ['postgres'],
+    require_tld: false,
+    require_protocol: true,
+  })
+  POSTGRES_URL: string;
 }
