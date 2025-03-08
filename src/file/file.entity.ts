@@ -22,8 +22,8 @@ export class File {
   provider: string;
 
   @Exclude()
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  providerId?: string;
+  @Column({ type: 'varchar', length: 255 })
+  providerId: string;
 
   @ApiProperty()
   @CreateDateColumn()

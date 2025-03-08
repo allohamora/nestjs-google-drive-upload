@@ -1,5 +1,18 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { File } from './file.entity';
 import { CreateFilesDto } from './dto/create-files.dto';
 import { FileService } from './file.service';
@@ -17,14 +30,18 @@ export class FileController {
 
   @Get()
   @ApiErrorBadRequestResponse({ description: 'validation was failed' })
-  @ApiOkResponse({ description: 'Get files', type: File, isArray: true })
+  @ApiOkResponse({
+    description: 'files were received',
+    type: File,
+    isArray: true,
+  })
   public async getFiles(@Query() dto: GetFilesDto) {
     return this.fileService.getFiles(dto);
   }
 
   @Post()
   @ApiCreatedResponse({
-    description: 'Create files',
+    description: 'files were created',
     type: File,
     isArray: true,
   })
@@ -33,5 +50,13 @@ export class FileController {
   @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
   public async createFiles(@Body() dto: CreateFilesDto) {
     return this.fileService.createFiles(dto);
+  }
+
+  @HttpCode(204)
+  @Delete()
+  @ApiNoContentResponse({ description: 'files were removed' })
+  @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
+  public async removeFiles() {
+    return this.fileService.removeFiles();
   }
 }

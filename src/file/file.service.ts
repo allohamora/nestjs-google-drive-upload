@@ -21,10 +21,14 @@ import { GetFilesDto } from './dto/get-files.dto';
 export class FileService {
   private logger = new Logger(FileService.name);
 
+  private strategies: Record<string, UploadStrategy> = {};
+
   constructor(
     private fileRepository: FileRepository,
     private uploadStrategy: UploadStrategy,
-  ) {}
+  ) {
+    this.strategies[uploadStrategy.provider] = uploadStrategy;
+  }
 
   private async linkToUploadDto(link: string) {
     const res = await fetch(link);
@@ -92,5 +96,41 @@ export class FileService {
 
   public async getFiles(dto: GetFilesDto) {
     return await this.fileRepository.getFiles(dto);
+  }
+
+  public async removeFiles() {
+    for await (const files of this.fileRepository.iterateFiles(10)) {
+      const res = await Promise.allSettled(
+        files.map(async (file) => {
+          const strategy = this.strategies[file.provider];
+          if (!strategy) {
+            throw new Error(
+              `strategy for provider: "${file.provider}" is not found`,
+            );
+          }
+
+          await this.strategies[file.provider].remove(file.providerId);
+
+          return file;
+        }),
+      );
+
+      const success = res
+        .filter((result) => result.status !== 'rejected')
+        .map((result) => result.value);
+      const failed = res.length - success.length;
+
+      if (success.length) {
+        await this.fileRepository.removeFiles(success);
+      }
+
+      if (failed) {
+        this.logger.error('failed to remove some files', {
+          failed: res.filter((result) => result.status === 'rejected'),
+        });
+
+        throw new InternalServerErrorException('some files were not removed');
+      }
+    }
   }
 }
