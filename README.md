@@ -42,7 +42,7 @@ $ npm run start:dev
 
 ```bash
 # generate a migration
-$ npm run migration:generate --name=test
+$ npm run migration:generate --name=example
 
 # run a migration
 $ npm run migration:run
