@@ -4,8 +4,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateFilesDto } from './dto/create-files.dto';
 import {
   UploadDto,
@@ -16,14 +14,15 @@ import { extension } from 'mime-types';
 import { randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
 import { ReadableStream } from 'node:stream/web';
-import { File } from './file.entity';
+import { FileRepository } from './file.repository';
+import { GetFilesDto } from './dto/get-files.dto';
 
 @Injectable()
 export class FileService {
   private logger = new Logger(FileService.name);
 
   constructor(
-    @InjectRepository(File) private fileRepository: Repository<File>,
+    private fileRepository: FileRepository,
     private uploadStrategy: UploadStrategy,
   ) {}
 
@@ -80,15 +79,16 @@ export class FileService {
       uploadDtos.map(async (dto) => await this.uploadStrategy.upload(dto)),
     );
     const resultDtos = await this.handleUploadResults(uploadResults);
+    const createDtos = resultDtos.map(({ url, id }) => ({
+      url,
+      provider: this.uploadStrategy.provider,
+      providerId: id,
+    }));
 
-    return await this.fileRepository.save(
-      resultDtos.map(({ url, id }) =>
-        this.fileRepository.create({
-          url,
-          provider: this.uploadStrategy.provider,
-          providerId: id,
-        }),
-      ),
-    );
+    return await this.fileRepository.createFiles(createDtos);
+  }
+
+  public async getFiles(dto: GetFilesDto) {
+    return await this.fileRepository.getFiles(dto);
   }
 }
