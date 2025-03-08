@@ -77,5 +77,10 @@
   "lint-staged": {
     "*.{js,cjs,mjs,json,yml,md}": "prettier --write",
     "*.ts": "eslint --fix"
-  }
+  },
+  "engines": {
+    "node": ">=v22.13.0",
+    "npm": ">=10.9.2"
+  },
+  "packageManager": "npm@10.9.2"
 }

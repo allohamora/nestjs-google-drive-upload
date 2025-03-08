@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './mocks/config.module.mock';
 import * as supertest from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import jestOpenApi from 'jest-openapi';
@@ -9,8 +10,6 @@ import { Test } from '@nestjs/testing';
 import { RootModule } from 'src/root.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
-import { ConfigDto } from 'src/config/config.dto';
-import { configDtoMock } from './mocks/config.dto.mock';
 import { UploadStrategy } from 'src/file/strategy/upload.strategy';
 import { GoogleDriveUploadStrategyMock } from './mocks/upload.strategy.mock';
 import { bootstrap } from 'src/bootstrap';
@@ -24,8 +23,6 @@ declare global {
 /* eslint-enable no-var */
 beforeAll(async () => {
   const moduleRef = await Test.createTestingModule({ imports: [RootModule] })
-    .overrideProvider(ConfigDto)
-    .useValue(configDtoMock)
     .overrideProvider(UploadStrategy)
     .useClass(GoogleDriveUploadStrategyMock)
     .compile();
