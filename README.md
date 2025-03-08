@@ -58,3 +58,7 @@ $ npm run migration:revert
 Service accounts have their own isolated Google Drive storage space. Sharing the folder with the service account email allows you to see the uploaded files in your Google Drive UI. Without sharing, files will still be uploaded successfully but will won't be visible in your Google Drive UI.
 
 Note: If you delete a file from the shared folder in your Google Drive UI, it won't be permanently deleted from the service account's storage—it will only be moved to the trash. To properly delete files, use the API endpoints.
+
+### Why do I need /v1/files/:id/download endpoint?
+
+Google Drive files cannot be embedded into <img> tag directly, they disabled the ability to do it, so we need a proxy endpoint to serve the files, but it's just a browser limit, so you can just do `fetch` on google drive url and receive the file stream.
