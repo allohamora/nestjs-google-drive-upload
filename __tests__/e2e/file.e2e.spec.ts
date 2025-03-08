@@ -366,7 +366,7 @@ describe('FileController (e2e)', () => {
     });
   });
 
-  describe('GET /v1/files/:id', () => {
+  describe('GET /v1/files/:id/download', () => {
     it('downloads a file', async () => {
       const fileData = {
         url: 'https://example.com',
