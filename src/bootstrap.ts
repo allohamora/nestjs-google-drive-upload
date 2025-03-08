@@ -8,6 +8,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ErrorFilter } from './response/error.filter';
 
 export const bootstrap = async (app: INestApplication) => {
   app.enableVersioning({ defaultVersion: '1', type: VersioningType.URI });
@@ -15,6 +16,8 @@ export const bootstrap = async (app: INestApplication) => {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  app.useGlobalFilters(new ErrorFilter());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Nestjs Google Drive Upload App')
