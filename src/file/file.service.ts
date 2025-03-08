@@ -77,7 +77,7 @@ export class FileService {
 
     this.logger.error('failed to upload some files', { failed });
 
-    throw new UnprocessableEntityException(`failed to upload some files`);
+    throw new InternalServerErrorException(`failed to upload some files`);
   }
 
   public async createFiles({ urls }: CreateFilesDto) {
