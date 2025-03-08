@@ -44,6 +44,20 @@ export class FileController {
     return this.fileService.getFiles(dto);
   }
 
+  @Post()
+  @ApiOperation({ summary: 'create new files' })
+  @ApiCreatedResponse({
+    description: 'files were created',
+    type: File,
+    isArray: true,
+  })
+  @ApiErrorBadRequestResponse({ description: 'validation was failed' })
+  @ApiErrorUnprocessableEntityResponse({ description: 'processing was failed' })
+  @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
+  public async createFiles(@Body() dto: CreateFilesDto) {
+    return this.fileService.createFiles(dto);
+  }
+
   @Get(':id/download')
   @ApiOperation({ summary: 'for usage inside <img > tag' })
   @ApiOkResponse({
@@ -64,23 +78,9 @@ export class FileController {
     return this.fileService.downloadFile(dto);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'create new files' })
-  @ApiCreatedResponse({
-    description: 'files were created',
-    type: File,
-    isArray: true,
-  })
-  @ApiErrorBadRequestResponse({ description: 'validation was failed' })
-  @ApiErrorUnprocessableEntityResponse({ description: 'processing was failed' })
-  @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
-  public async createFiles(@Body() dto: CreateFilesDto) {
-    return this.fileService.createFiles(dto);
-  }
-
   @HttpCode(204)
-  @Delete()
-  @ApiOperation({ summary: 'remove all files' })
+  @Delete('all')
+  @ApiOperation({ summary: 'for clearing after usage' })
   @ApiNoContentResponse({ description: 'files were removed' })
   @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
   public async removeFiles() {
