@@ -80,7 +80,9 @@ export class FileController {
 
   @HttpCode(204)
   @Delete('all')
-  @ApiOperation({ summary: 'for clearing after usage' })
+  @ApiOperation({
+    summary: 'for clearing after usage, P.S. uploads folder will not removed',
+  })
   @ApiNoContentResponse({ description: 'files were removed' })
   @ApiErrorInternalServerErrorResponse({ description: 'something went wrong' })
   public async removeFiles() {
