@@ -1,3 +1,4 @@
+import { StreamableFile } from '@nestjs/common';
 import { Readable } from 'node:stream';
 
 export type UploadDto = {
@@ -16,4 +17,5 @@ export abstract class UploadStrategy {
 
   public abstract upload(dto: UploadDto): Promise<UploadResultDto>;
   public abstract remove(id: string): Promise<void>;
+  public abstract download(id: string): Promise<StreamableFile>;
 }

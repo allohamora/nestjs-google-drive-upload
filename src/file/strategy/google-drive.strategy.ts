@@ -1,7 +1,12 @@
 import { UploadDto, UploadResultDto, UploadStrategy } from './upload.strategy';
 import { drive, auth } from '@googleapis/drive';
 import type { drive_v3 } from '@googleapis/drive';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  StreamableFile,
+} from '@nestjs/common';
 import { ConfigDto } from 'src/config/config.dto';
 
 const FOLDER_NAME = 'uploads';
@@ -96,5 +101,20 @@ export class GoogleDriveUploadStrategy
 
   public override async remove(id: string): Promise<void> {
     await this.api.files.delete({ fileId: id });
+  }
+
+  public override async download(id: string): Promise<StreamableFile> {
+    const res = await this.api.files.get(
+      { fileId: id, alt: 'media' },
+      { responseType: 'stream' },
+    );
+
+    const disposition =
+      (res.headers['content-disposition'] as string) ?? undefined;
+    const contentLength = res.headers['content-length'] as string;
+    const length = contentLength ? Number(contentLength) : undefined;
+    const type = (res.headers['content-type'] as string) ?? undefined;
+
+    return new StreamableFile(res.data, { disposition, length, type });
   }
 }

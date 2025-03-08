@@ -46,4 +46,8 @@ export class FileRepository {
   public async removeFiles(files: File[]) {
     await this.repository.remove(files);
   }
+
+  public async getFile(id: string) {
+    return this.repository.findOne({ where: { id } });
+  }
 }

@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateFilesDto } from './dto/create-files.dto';
@@ -16,6 +17,7 @@ import { Readable } from 'node:stream';
 import { ReadableStream } from 'node:stream/web';
 import { FileRepository } from './file.repository';
 import { GetFilesDto } from './dto/get-files.dto';
+import { GetFileDto } from './dto/get-file.dto';
 
 @Injectable()
 export class FileService {
@@ -132,5 +134,21 @@ export class FileService {
         throw new InternalServerErrorException('some files were not removed');
       }
     }
+  }
+
+  public async downloadFile({ id }: GetFileDto) {
+    const file = await this.fileRepository.getFile(id);
+    if (!file) {
+      throw new NotFoundException(`file with id: "${id}" not found`);
+    }
+
+    const strategy = this.strategies[file.provider];
+    if (!strategy) {
+      throw new InternalServerErrorException(
+        `strategy for provider: "${file.provider}" is not found`,
+      );
+    }
+
+    return await strategy.download(file.providerId);
   }
 }

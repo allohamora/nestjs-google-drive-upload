@@ -19,3 +19,6 @@ export const ApiErrorInternalServerErrorResponse = createApiErrorResponse(
 export const ApiErrorUnprocessableEntityResponse = createApiErrorResponse(
   HttpStatus.UNPROCESSABLE_ENTITY,
 );
+export const ApiErrorNotFoundResponse = createApiErrorResponse(
+  HttpStatus.NOT_FOUND,
+);
