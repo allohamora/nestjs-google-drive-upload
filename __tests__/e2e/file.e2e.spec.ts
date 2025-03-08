@@ -32,7 +32,7 @@ export const expectRes = (
   expect(res).toSatisfyApiSpec();
 };
 
-describe('FileController (e2e', () => {
+describe('FileController (e2e)', () => {
   let uploadStrategy: UploadStrategy;
 
   let uploadSpy: jest.SpyInstance<Promise<UploadResponseDto>, [dto: UploadDto]>;
