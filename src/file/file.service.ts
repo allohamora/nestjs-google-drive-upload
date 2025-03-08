@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateFilesDto } from './dto/create-files.dto';
 import {
@@ -29,12 +29,14 @@ export class FileService {
   private async linkToUploadDto(link: string) {
     const res = await fetch(link);
     if (!res.body) {
-      throw new BadRequestException(`invalid link: "${link}"`);
+      throw new UnprocessableEntityException(`invalid link: "${link}"`);
     }
 
     const mimeType = res.headers.get('content-type');
     if (!mimeType) {
-      throw new BadRequestException(`invalid content-type for link: "${link}"`);
+      throw new UnprocessableEntityException(
+        `invalid content-type for link: "${link}"`,
+      );
     }
 
     const fileName = `${Date.now()}---${randomUUID()}.${extension(mimeType)}`;
@@ -68,7 +70,7 @@ export class FileService {
 
     this.logger.error('failed to upload some files', { failed });
 
-    throw new BadRequestException(`failed to upload some files`);
+    throw new UnprocessableEntityException(`failed to upload some files`);
   }
 
   public async createFiles({ links }: CreateFilesDto) {
