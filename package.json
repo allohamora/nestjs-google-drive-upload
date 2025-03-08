@@ -89,5 +89,10 @@
     "node": ">=v22.13.0",
     "npm": ">=10.9.2"
   },
-  "packageManager": "npm@10.9.2"
+  "packageManager": "npm@10.9.2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allohamora/nestjs-google-drive-upload.git"
+  },
+  "homepage": "https://github.com/allohamora/nestjs-google-drive-upload#readme"
 }
