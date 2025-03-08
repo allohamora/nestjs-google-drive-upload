@@ -13,13 +13,21 @@ export class File {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ example: 'https://drive.google.com/file/d/e7b58160' })
-  @Column({ type: 'text' })
+  @ApiProperty({ example: 'https://example.com/file/d/122fas0' })
+  @Column({ type: 'varchar', length: 560 })
   url: string;
+
+  @Exclude()
+  @Column({ type: 'varchar', length: 100 })
+  mimeType: string;
 
   @Exclude()
   @Column({ type: 'varchar', length: 50 })
   provider: string;
+
+  @ApiProperty({ example: 'https://drive.google.com/file/d/e7b58160' })
+  @Column({ type: 'varchar', length: 560 })
+  providerUrl: string;
 
   @Exclude()
   @Column({ type: 'varchar', length: 255 })

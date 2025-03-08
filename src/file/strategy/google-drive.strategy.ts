@@ -1,4 +1,8 @@
-import { UploadDto, UploadResultDto, UploadStrategy } from './upload.strategy';
+import {
+  UploadDto,
+  UploadResponseDto,
+  UploadStrategy,
+} from './upload.strategy';
 import { drive, auth } from '@googleapis/drive';
 import type { drive_v3 } from '@googleapis/drive';
 import {
@@ -74,7 +78,7 @@ export class GoogleDriveUploadStrategy
     fileName,
     mimeType,
     body,
-  }: UploadDto): Promise<UploadResultDto> {
+  }: UploadDto): Promise<UploadResponseDto> {
     const res = await this.api.files.create({
       requestBody: {
         name: fileName,
@@ -87,16 +91,16 @@ export class GoogleDriveUploadStrategy
       fields: 'id',
     });
 
-    const id = res.data.id;
-    if (!id) {
+    const providerId = res.data.id;
+    if (!providerId) {
       throw new Error(
         `failed to upload file: ${fileName}, data: ${JSON.stringify(res.data)}`,
       );
     }
 
-    const url = `https://drive.google.com/uc?id=${id}`;
+    const providerUrl = `https://drive.google.com/uc?id=${providerId}`;
 
-    return { url, id };
+    return { providerUrl, providerId };
   }
 
   public override async remove(id: string): Promise<void> {

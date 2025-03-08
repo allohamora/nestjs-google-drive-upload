@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsNotEmpty, IsUrl } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsUrl,
+  MaxLength,
+} from 'class-validator';
 
 const POP_CAT_IMAGES = [
   'https://popcat.click/twitter-card.jpg',
@@ -9,11 +15,12 @@ const POP_CAT_IMAGES = [
 export class CreateFilesDto {
   @ApiProperty({
     example: POP_CAT_IMAGES,
-    description: 'The links to the files to be uploaded',
+    description: 'The urls to the files to be uploaded',
   })
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
+  @MaxLength(560, { each: true })
   @IsUrl({}, { each: true })
-  links: string[];
+  urls: string[];
 }

@@ -6,11 +6,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateFilesDto } from './dto/create-files.dto';
-import {
-  UploadDto,
-  UploadResultDto,
-  UploadStrategy,
-} from './strategy/upload.strategy';
+import { UploadResponseDto, UploadStrategy } from './strategy/upload.strategy';
 import { extension } from 'mime-types';
 import { randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
@@ -18,6 +14,11 @@ import { ReadableStream } from 'node:stream/web';
 import { FileRepository } from './file.repository';
 import { GetFilesDto } from './dto/get-files.dto';
 import { GetFileDto } from './dto/get-file.dto';
+
+type UploadResultDto = UploadResponseDto & {
+  mimeType: string;
+  url: string;
+};
 
 @Injectable()
 export class FileService {
@@ -32,23 +33,23 @@ export class FileService {
     this.strategies[uploadStrategy.provider] = uploadStrategy;
   }
 
-  private async linkToUploadDto(link: string) {
-    const res = await fetch(link);
+  private async urlToUploadData(url: string) {
+    const res = await fetch(url);
     if (!res.body) {
-      throw new UnprocessableEntityException(`invalid link: "${link}"`);
+      throw new UnprocessableEntityException(`invalid url: "${url}"`);
     }
 
     const mimeType = res.headers.get('content-type');
     if (!mimeType) {
       throw new UnprocessableEntityException(
-        `invalid content-type for link: "${link}"`,
+        `invalid content-type for url: "${url}"`,
       );
     }
 
     const fileName = `${Date.now()}---${randomUUID()}.${extension(mimeType)}`;
     const body = Readable.fromWeb(ReadableStream.from(res.body));
 
-    return { body, mimeType, fileName } satisfies UploadDto;
+    return { body, mimeType, fileName, url };
   }
 
   private async handleUploadResults(
@@ -69,7 +70,7 @@ export class FileService {
     await Promise.all(
       results.map(async (result) => {
         if (result.status === 'fulfilled') {
-          await this.uploadStrategy.remove(result.value.id);
+          await this.uploadStrategy.remove(result.value.providerId);
         }
       }),
     );
@@ -79,18 +80,21 @@ export class FileService {
     throw new UnprocessableEntityException(`failed to upload some files`);
   }
 
-  public async createFiles({ links }: CreateFilesDto) {
-    const uploadDtos = await Promise.all(
-      links.map(async (link) => await this.linkToUploadDto(link)),
+  public async createFiles({ urls }: CreateFilesDto) {
+    const uploadData = await Promise.all(
+      urls.map(async (url) => await this.urlToUploadData(url)),
     );
     const uploadResults = await Promise.allSettled(
-      uploadDtos.map(async (dto) => await this.uploadStrategy.upload(dto)),
+      uploadData.map(async (dto) => ({
+        mimeType: dto.mimeType,
+        url: dto.url,
+        ...(await this.uploadStrategy.upload(dto)),
+      })),
     );
     const resultDtos = await this.handleUploadResults(uploadResults);
-    const createDtos = resultDtos.map(({ url, id }) => ({
-      url,
+    const createDtos = resultDtos.map((data) => ({
+      ...data,
       provider: this.uploadStrategy.provider,
-      providerId: id,
     }));
 
     return await this.fileRepository.createFiles(createDtos);
