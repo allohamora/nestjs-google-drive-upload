@@ -51,6 +51,12 @@ $ npm run migration:run
 $ npm run migration:revert
 ```
 
+## Tests (e2e)
+
+```bash
+$ npm run test
+```
+
 ## Q/A
 
 ### Why do I need to share the folder with the service account email?
