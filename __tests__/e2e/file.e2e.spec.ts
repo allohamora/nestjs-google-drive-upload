@@ -102,7 +102,7 @@ describe('FileController (e2e)', () => {
 
     expectResStatus(status, res);
 
-    return res.body as Buffer;
+    return { body: res.body as Buffer, headers: res.headers };
   };
 
   const deleteAllFiles = async (status = HttpStatus.NO_CONTENT) => {
@@ -383,7 +383,7 @@ describe('FileController (e2e)', () => {
       );
 
       const res = await downloadFile({ id: file.id }, HttpStatus.OK);
-      expect(res).toEqual(Buffer.from('test'));
+      expect(res.body).toEqual(Buffer.from('test'));
     });
 
     it('handles missing provider', async () => {
@@ -420,6 +420,31 @@ describe('FileController (e2e)', () => {
 
     it('handles not found file', async () => {
       await downloadFile({ id: randomUUID() }, HttpStatus.NOT_FOUND);
+    });
+
+    it('sets correct content type header', async () => {
+      const mimeType = 'application/pdf';
+      const fileData = {
+        url: 'https://example.com',
+        provider: uploadStrategy.provider,
+        providerUrl: 'https://example.com',
+        providerId: 'test',
+        mimeType,
+      };
+
+      const [file] = await fileRepository.createFiles([fileData]);
+      const testContent = 'test content';
+
+      downloadSpy.mockImplementation(
+        async () =>
+          new StreamableFile(Readable.from(testContent), { type: mimeType }),
+      );
+
+      const res = await downloadFile({ id: file.id }, HttpStatus.OK);
+
+      expect(res.headers['content-type']).toEqual(mimeType);
+      expect(res.body.toString('utf-8')).toEqual(testContent);
+      expect(downloadSpy).toHaveBeenCalledWith(file.providerId);
     });
   });
 
