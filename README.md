@@ -2,6 +2,9 @@
 
 a nestjs google drive upload app
 
+[![build](https://github.com/allohamora/nestjs-google-drive-upload/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/allohamora/nestjs-google-drive-upload/actions/workflows/build.yml/badge.svg?event=push)
+[![test](https://github.com/allohamora/nestjs-google-drive-upload/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/allohamora/nestjs-google-drive-upload/actions/workflows/test.yml/badge.svg?event=push)
+
 ## Setup Google Drive API
 
 - Go to [Google Cloud Console](https://console.cloud.google.com/)
