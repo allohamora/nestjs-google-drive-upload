@@ -3,6 +3,7 @@ import { RootModule } from './root.module';
 import { config } from './config/config.module';
 import {
   ClassSerializerInterceptor,
+  Logger,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
@@ -28,6 +29,12 @@ const bootstrap = async () => {
   SwaggerModule.setup('/', app, documentFactory);
 
   await app.listen(config.PORT);
+
+  const logger = new Logger('bootstrap');
+  logger.verbose(
+    `Application is running on http://localhost:${config.PORT} with environment ${config.NODE_ENV}`,
+  );
+  logger.verbose('Happy using!');
 };
 
 bootstrap();
