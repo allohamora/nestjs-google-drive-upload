@@ -29,7 +29,8 @@ export class FileRepository {
     while (true) {
       const files = await this.repository.find({
         order: { createdAt: 'DESC' },
-        take,
+        // we request one more item to check if there are more items instead of making an additional request
+        take: take + 1,
         skip,
       });
 
@@ -37,14 +38,19 @@ export class FileRepository {
         break;
       }
 
-      yield files;
+      yield files.slice(0, take);
 
       skip += take;
+
+      if (files.length <= take) {
+        break;
+      }
     }
   }
 
   public async removeFiles(files: File[]) {
-    await this.repository.remove(files);
+    // if you use a .remove method, then typeorm will make an additional request to select all entities
+    await this.repository.delete(files.map(({ id }) => id));
   }
 
   public async getFile(id: string) {
