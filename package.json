@@ -78,6 +78,13 @@
     "*.{js,cjs,mjs,json,yml,md}": "prettier --write",
     "*.ts": "eslint --fix"
   },
+  "overrides": {
+    "jest-openapi": {
+      "openapi-validator": {
+        "axios": "^1.6.0"
+      }
+    }
+  },
   "engines": {
     "node": ">=v22.13.0",
     "npm": ">=10.9.2"
