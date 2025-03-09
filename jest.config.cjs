@@ -5,7 +5,6 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '__tests__/e2e/.*.spec.ts$',
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup-e2e-context.ts'],
-  setupFiles: ['dotenv/config'],
   moduleDirectories: ['<rootDir>', 'node_modules'],
   collectCoverageFrom: ['src/**/*.ts'],
   testTimeout: 15_000,
