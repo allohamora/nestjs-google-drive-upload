@@ -11,7 +11,7 @@ import { RootModule } from 'src/root.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import { UploadStrategy } from 'src/file/strategy/upload.strategy';
-import { GoogleDriveUploadStrategyMock } from './mocks/upload.strategy.mock';
+import { UploadStrategyMock } from './mocks/upload.strategy.mock';
 import { bootstrap } from 'src/bootstrap';
 
 /* eslint-disable no-var */
@@ -24,7 +24,7 @@ declare global {
 beforeAll(async () => {
   const moduleRef = await Test.createTestingModule({ imports: [RootModule] })
     .overrideProvider(UploadStrategy)
-    .useClass(GoogleDriveUploadStrategyMock)
+    .useClass(UploadStrategyMock)
     .compile();
   const app = moduleRef.createNestApplication();
 

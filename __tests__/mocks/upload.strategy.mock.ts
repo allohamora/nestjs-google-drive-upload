@@ -6,8 +6,8 @@ import {
   UploadStrategy,
 } from 'src/file/strategy/upload.strategy';
 
-export class GoogleDriveUploadStrategyMock extends UploadStrategy {
-  public provider = 'GOOGLE_DRIVE_MOCK';
+export class UploadStrategyMock extends UploadStrategy {
+  public provider = 'MOCK';
 
   public async upload(): Promise<UploadResponseDto> {
     const providerId = randomUUID();
