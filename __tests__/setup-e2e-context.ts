@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import './mocks/config.module.mock';
+import './mocks/config.module.mock'; // this import should be first to mock the global config
 import * as supertest from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import jestOpenApi from 'jest-openapi';
