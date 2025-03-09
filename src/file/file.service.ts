@@ -75,7 +75,7 @@ export class FileService {
       }),
     );
 
-    this.logger.error('failed to upload some files', { failed });
+    this.logger.error(new Error('failed to upload some files'), { failed });
 
     throw new InternalServerErrorException(`failed to upload some files`);
   }
@@ -131,7 +131,7 @@ export class FileService {
       }
 
       if (failed) {
-        this.logger.error('failed to remove some files', {
+        this.logger.error(new Error('failed to remove some files'), {
           failed: res.filter((result) => result.status === 'rejected'),
         });
 
