@@ -126,6 +126,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: 'TEST',
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'text/plain',
       };
@@ -144,6 +145,7 @@ describe('FileController (e2e)', () => {
             createdAt: expect.any(String),
             url: fileData.url,
             providerUrl: fileData.providerUrl,
+            providerViewUrl: fileData.providerViewUrl,
           }),
         );
         expect(file).not.toHaveProperty('providerId');
@@ -157,6 +159,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: 'TEST',
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'text/plain',
       };
@@ -177,6 +180,7 @@ describe('FileController (e2e)', () => {
             createdAt: expect.any(String),
             url: 'test1',
             providerUrl: fileData.providerUrl,
+            providerViewUrl: fileData.providerViewUrl,
           }),
         );
         expect(file).not.toHaveProperty('providerId');
@@ -190,6 +194,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: 'TEST',
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'text/plain',
       };
@@ -209,6 +214,7 @@ describe('FileController (e2e)', () => {
           createdAt: expect.any(String),
           url: 'test2',
           providerUrl: fileData.providerUrl,
+          providerViewUrl: fileData.providerViewUrl,
         }),
       );
     });
@@ -218,6 +224,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: 'TEST',
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'text/plain',
       };
@@ -241,6 +248,7 @@ describe('FileController (e2e)', () => {
           createdAt: expect.any(String),
           url: 'test2',
           providerUrl: fileData.providerUrl,
+          providerViewUrl: fileData.providerViewUrl,
         }),
       );
     });
@@ -253,6 +261,62 @@ describe('FileController (e2e)', () => {
 
   describe('POST /v1/files', () => {
     it('uploads files', async () => {
+      const urls = ['https://example.com/1', 'https://example.com/2'];
+
+      uploadSpy.mockImplementation(async () => ({
+        providerUrl: 'test',
+        providerViewUrl: 'test',
+        providerId: 'test',
+      }));
+
+      fetchMock.mockImplementation(async () =>
+        mockResponse({ headers: new Headers({ 'content-type': 'test' }) }),
+      );
+
+      const files = await createFiles({ urls }, HttpStatus.CREATED);
+      expect(files).toHaveLength(urls.length);
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        expect(file).toEqual(
+          expect.objectContaining({
+            id: expect.any(String),
+            createdAt: expect.any(String),
+            url: urls[i],
+            providerUrl: 'test',
+            providerViewUrl: 'test',
+          }),
+        );
+        expect(file).not.toHaveProperty('providerId');
+        expect(file).not.toHaveProperty('mimeType');
+        expect(file).not.toHaveProperty('provider');
+      }
+
+      const createdFiles = await fileRepository.getFiles({ limit: 50 });
+      expect(createdFiles).toHaveLength(urls.length);
+
+      for (let i = 0; i < createdFiles.length; i++) {
+        const file = createdFiles[i];
+
+        expect(file).toEqual(
+          expect.objectContaining({
+            id: expect.any(String),
+            url: urls[i],
+            mimeType: 'test',
+            provider: uploadStrategy.provider,
+            providerUrl: 'test',
+            providerViewUrl: 'test',
+            providerId: 'test',
+            createdAt: expect.any(Date),
+          }),
+        );
+      }
+
+      expect(uploadSpy).toHaveBeenCalledTimes(urls.length);
+    });
+
+    it('uploads files without providerViewUrl', async () => {
       const urls = ['https://example.com/1', 'https://example.com/2'];
 
       uploadSpy.mockImplementation(async () => ({
@@ -276,6 +340,7 @@ describe('FileController (e2e)', () => {
             createdAt: expect.any(String),
             url: urls[i],
             providerUrl: 'test',
+            providerViewUrl: null,
           }),
         );
         expect(file).not.toHaveProperty('providerId');
@@ -296,6 +361,7 @@ describe('FileController (e2e)', () => {
             mimeType: 'test',
             provider: uploadStrategy.provider,
             providerUrl: 'test',
+            providerViewUrl: null,
             providerId: 'test',
             createdAt: expect.any(Date),
           }),
@@ -316,6 +382,7 @@ describe('FileController (e2e)', () => {
 
         return {
           providerUrl: 'test',
+          providerViewUrl: 'test',
           providerId: 'test',
         };
       });
@@ -372,6 +439,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };
@@ -391,6 +459,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: randomUUID(),
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };
@@ -405,6 +474,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };
@@ -428,6 +498,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType,
       };
@@ -454,6 +525,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };
@@ -475,6 +547,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };
@@ -504,6 +577,7 @@ describe('FileController (e2e)', () => {
         url: 'https://example.com',
         provider: uploadStrategy.provider,
         providerUrl: 'https://example.com',
+        providerViewUrl: 'https://example.com/view',
         providerId: 'test',
         mimeType: 'application/octet-stream',
       };

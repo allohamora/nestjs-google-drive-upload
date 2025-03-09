@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { config } from '../config/config.module';
 import { DataSourceOptions } from 'typeorm';
 import { NamingStrategy } from './naming.strategy';
-import { NodeEnv } from 'src/config/config.dto';
+import { NodeEnv } from '../config/config.dto';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',

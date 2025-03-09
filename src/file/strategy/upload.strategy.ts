@@ -9,6 +9,7 @@ export type UploadDto = {
 
 export type UploadResponseDto = {
   providerUrl: string;
+  providerViewUrl?: string;
   providerId: string;
 };
 

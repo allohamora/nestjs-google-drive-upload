@@ -29,6 +29,15 @@ export class File {
   @Column({ type: 'varchar', length: 560 })
   providerUrl: string;
 
+  @ApiProperty({
+    example: 'https://drive.google.com/file/d/e7b58160/view',
+    type: String,
+    nullable: true,
+    required: false,
+  })
+  @Column({ type: 'varchar', length: 560, nullable: true })
+  providerViewUrl?: string | null;
+
   @Exclude()
   @Column({ type: 'varchar', length: 255 })
   providerId: string;

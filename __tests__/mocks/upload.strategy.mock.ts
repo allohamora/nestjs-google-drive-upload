@@ -14,7 +14,8 @@ export class UploadStrategyMock extends UploadStrategy {
 
     return {
       providerId,
-      providerUrl: `'https://example.com'/${providerId}`,
+      providerUrl: `https://example.com/${providerId}`,
+      providerViewUrl: `https://example.com/${providerId}/view`,
     };
   }
 

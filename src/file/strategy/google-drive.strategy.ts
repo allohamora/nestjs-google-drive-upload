@@ -88,7 +88,7 @@ export class GoogleDriveUploadStrategy
         mimeType,
         body,
       },
-      fields: 'id',
+      fields: 'id,webViewLink',
     });
 
     const providerId = res.data.id;
@@ -99,8 +99,10 @@ export class GoogleDriveUploadStrategy
     }
 
     const providerUrl = `https://drive.google.com/uc?id=${providerId}`;
+    const providerViewUrl =
+      res.data.webViewLink === null ? undefined : res.data.webViewLink;
 
-    return { providerUrl, providerId };
+    return { providerUrl, providerViewUrl, providerId };
   }
 
   public override async remove(id: string): Promise<void> {
