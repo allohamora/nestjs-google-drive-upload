@@ -12,10 +12,7 @@ import { Response } from 'express';
 export class ErrorFilter implements ExceptionFilter {
   private logger = new Logger(ErrorFilter.name);
 
-  public catch(
-    exception: Error,
-    host: ArgumentsHost,
-  ): void | Response<unknown> {
+  public catch(exception: Error, host: ArgumentsHost) {
     const { messages, status } = this.getCodeAndMessages(exception);
     const type = host.getType();
 
@@ -28,33 +25,29 @@ export class ErrorFilter implements ExceptionFilter {
         return res.status(status).send({ messages, status });
       }
       default:
-        this.logger.error(`unknown type: ${type}`);
+        this.logger.error(new Error(`unknown type: ${type}`));
         break;
     }
   }
 
-  private getCodeAndMessages(exception: Error): {
-    messages: string[];
-    status: number;
-  } {
+  private getCodeAndMessages(exception: Error) {
     const { message } = exception;
     const messages = [message];
 
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
 
-      if (typeof response === 'object') {
-        const { message: resMessage } = response as {
-          message: string[] | string;
-        };
-        const finalMessages = Array.isArray(resMessage)
-          ? resMessage
-          : [resMessage];
-
-        return { messages: finalMessages, status: exception.getStatus() };
+      if (typeof response === 'string' || !('message' in response)) {
+        return { messages, status: exception.getStatus() };
       }
 
-      return { messages, status: exception.getStatus() };
+      // bad request validation exceptions have a message array
+      return {
+        messages: Array.isArray(response.message)
+          ? response.message
+          : [response.message],
+        status: exception.getStatus(),
+      };
     }
 
     return { messages, status: HttpStatus.INTERNAL_SERVER_ERROR };
