@@ -143,7 +143,7 @@ export class FileService {
   public async downloadFile({ id }: GetFileDto) {
     const file = await this.fileRepository.getFile(id);
     if (!file) {
-      throw new NotFoundException(`file with id: "${id}" not found`);
+      throw new NotFoundException(`file with id: "${id}" is not found`);
     }
 
     const strategy = this.strategies[file.provider];
