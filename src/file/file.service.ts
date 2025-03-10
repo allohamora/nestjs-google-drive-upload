@@ -35,7 +35,7 @@ export class FileService {
 
   private async urlToUploadData(url: string) {
     const res = await fetch(url);
-    if (!res.body) {
+    if (!res.ok || !res.body) {
       throw new UnprocessableEntityException(`invalid url: "${url}"`);
     }
 

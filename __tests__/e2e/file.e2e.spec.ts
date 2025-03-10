@@ -117,6 +117,7 @@ describe('FileController (e2e)', () => {
     ({
       body: ReadableStream.from([]),
       headers: new Headers({ 'content-type': 'test' }),
+      ok: true,
       ...data,
     }) as unknown as Response;
 
@@ -410,6 +411,15 @@ describe('FileController (e2e)', () => {
 
     it('handles missing body', async () => {
       fetchMock.mockImplementation(async () => mockResponse({ body: null }));
+
+      await createFiles(
+        { urls: ['https://example.com/1'] },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    });
+
+    it('handles failed response', async () => {
+      fetchMock.mockImplementation(async () => mockResponse({ ok: false }));
 
       await createFiles(
         { urls: ['https://example.com/1'] },
