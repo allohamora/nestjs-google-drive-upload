@@ -62,6 +62,16 @@ $ npm run test
 
 ## Q/A
 
+### What is the main goal of this project?
+
+The main goal of this project is to provide a client-driven solution for uploading files to Google Drive. Here, the client initiates the upload and is responsible for handling retries if an upload fails. When the upload is successful, the API immediately returns ready-to-use file links, which the client can use for further actions, such as rendering results or sharing.
+
+If you are looking for a background or queue-based solution—where the client submits an upload request and does not receive immediate links or status, but instead checks back later for results then you can use a queue system like [bull](https://github.com/OptimalBits/bull) or similar. This project is not intended for such asynchronous, server-managed workflows.
+
+### What happens if any file of the upload fails?
+
+If any file of the upload fails, the server will automatically clean up by deleting any files that were successfully uploaded during that request. An error is then returned to the client, allowing the client to retry the entire upload operation if desired.
+
 ### Why do I need to share the folder with the service account email?
 
 Service accounts have their own isolated Google Drive storage space. Sharing the folder with the service account email allows you to see the uploaded files in your Google Drive UI. Without sharing, files will still be uploaded successfully but will won't be visible in your Google Drive UI.
